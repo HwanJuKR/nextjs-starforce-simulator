@@ -2,33 +2,56 @@
 
 import useEnhance from "@/hooks/useEnhance";
 import { starData } from "@/constants/starData";
+import useCost from "@/hooks/useCost";
 
 export default function EnhanceSimulator() {
   const {
     current,
     isSimulating,
     stats,
-    levelStats,
-    targetLevel,
-    setTargetLevel,
+    starLevelStats,
+    targetStarLevel,
+    setTargetStarLevel,
+    equipLevel,
+    setEquipLevel,
     tryEnhance,
     bulkSimulate,
     reset,
   } = useEnhance();
 
+  const enhanceCost = useCost();
+  const currentCost = enhanceCost(equipLevel, current);
+
   return (
     <main>
       <h1>스타포스 강화 시뮬레이터</h1>
+      
       <div>
         <div>
-          <strong>현재 단계:</strong> {starData[current]?.level || "완료"}
+          <strong>장비 레벨:</strong>
+          <input
+            type="number"
+            value={equipLevel}
+            onChange={(e) => setEquipLevel(Number(e.target.value))}
+            min={1}
+            max={300}
+          />
+        </div>
+        <div>
+          <strong>현재 단계:</strong> {starData[current]?.starLevel || "완료"}
         </div>
         <div>
           <strong>최고 달성 단계:</strong>
-          {starData[stats.maxLevel]?.level || "0성"}
+          {starData[stats.maxStarLevel]?.starLevel || "0성"}
         </div>
         <div>
           <strong>총 시도:</strong> {stats.attempt.toLocaleString()}회
+        </div>
+        <div>
+          <strong>현재 강화 시도 비용:</strong> {currentCost.toLocaleString()} 메소
+        </div>
+        <div>
+          <strong>총 사용 비용:</strong> {stats.totalCost.toLocaleString()} 메소
         </div>
       </div>
 
@@ -45,27 +68,27 @@ export default function EnhanceSimulator() {
         </thead>
         <tbody>
           {starData.map((row, i) => {
-            const levelStat = levelStats[i] || {
+            const StarLevelStat = starLevelStats[i] || {
               attempt: 0,
               successe: 0,
               destroy: 0,
             };
             const actualSuccessRate =
-              levelStat.attempt > 0
-                ? ((levelStat.successe / levelStat.attempt) * 100).toFixed(1)
+              StarLevelStat.attempt > 0
+                ? ((StarLevelStat.successe / StarLevelStat.attempt) * 100).toFixed(1)
                 : "0.0";
             const actualDestroyRate =
-              levelStat.attempt > 0
-                ? ((levelStat.destroy / levelStat.attempt) * 100).toFixed(1)
+              StarLevelStat.attempt > 0
+                ? ((StarLevelStat.destroy / StarLevelStat.attempt) * 100).toFixed(1)
                 : "0.0";
 
             // 30성
             if (i === 30) {
               return (
-                <tr key={row.level}>
+                <tr key={row.starLevel}>
                   <td>
-                    {row.level}
-                    {i === stats.maxLevel && <span>달성!</span>}
+                    {row.starLevel}
+                    {i === stats.maxStarLevel && <span>달성!</span>}
                   </td>
                   <td>-</td>
                   <td>-</td>
@@ -77,14 +100,14 @@ export default function EnhanceSimulator() {
             }
 
             return (
-              <tr key={row.level}>
+              <tr key={row.starLevel}>
                 <td>
-                  {row.level}
-                  {i === stats.maxLevel && i > 0 && <span>최고</span>}
+                  {row.starLevel}
+                  {i === stats.maxStarLevel && i > 0 && <span>최고</span>}
                 </td>
                 <td>{row.success}%</td>
                 <td>{row.destroy}%</td>
-                <td>{levelStat.attempt.toLocaleString()}회</td>
+                <td>{StarLevelStat.attempt.toLocaleString()}회</td>
                 <td>{actualSuccessRate}%</td>
                 <td>{actualDestroyRate}%</td>
               </tr>
@@ -127,8 +150,8 @@ export default function EnhanceSimulator() {
           목표 강화 수치:
           <input
             type="number"
-            value={targetLevel}
-            onChange={(e) => setTargetLevel(Number(e.target.value))}
+            value={targetStarLevel}
+            onChange={(e) => setTargetStarLevel(Number(e.target.value))}
             min={1}
             max={30}
           />
