@@ -1,8 +1,19 @@
 "use client";
 
-import useEnhance from "@/hooks/useEnhance";
-import { starData } from "@/constants/starData";
+import Header from "@/components/common/Header";
+import EnhanceChance from "@/components/enhance/EnhanceChance";
+import EnhanceControl from "@/components/enhance/EnhanceControl";
+import EnhanceCost from "@/components/enhance/EnhanceCost";
+import EnhanceEvent from "@/components/enhance/EnhanceEvent";
+import EnhanceItem from "@/components/enhance/EnhanceItem";
+import EnhanceStarLevel from "@/components/enhance/EnhanceStarLevel";
+import SimulationChart from "@/components/simulation/SimulationChart";
+import SimulationControl from "@/components/simulation/SimulationControl";
+import SimulationSetting from "@/components/simulation/SimulationSetting";
+import SimulationStats from "@/components/simulation/SimulationStats";
+import SimulationTable from "@/components/simulation/SimulationTable";
 import useCost from "@/hooks/useCost";
+import useEnhance from "@/hooks/useEnhance";
 
 export default function EnhanceSimulator() {
   const {
@@ -23,141 +34,57 @@ export default function EnhanceSimulator() {
   const currentCost = enhanceCost(equipLevel, current);
 
   return (
-    <main>
-      <h1>스타포스 강화 시뮬레이터</h1>
-      
-      <div>
-        <div>
-          <strong>장비 레벨:</strong>
-          <input
-            type="number"
-            value={equipLevel}
-            onChange={(e) => setEquipLevel(Number(e.target.value))}
-            min={1}
-            max={300}
+    <div className="min-h-screen bg-gray-900 text-white p-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 스타포스 강화 영역 */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* 헤더 */}
+          <Header />
+          {/* 장비 아이템 영역 */}
+          <EnhanceItem />
+          {/* 별 표시 영역 */}
+          <EnhanceStarLevel current={current} />
+          {/* 확률 영역 */}
+          <EnhanceChance current={current} />
+          {/* 사용 재화 영역 */}
+          <EnhanceCost currentCost={currentCost} />
+          {/* todo: 강화 이벤트 영역 */}
+          <EnhanceEvent />
+          {/* 강화하기 영역 */}
+          <EnhanceControl
+            current={current}
+            isSimulating={isSimulating}
+            tryEnhance={tryEnhance}
           />
         </div>
-        <div>
-          <strong>현재 단계:</strong> {starData[current]?.starLevel || "완료"}
-        </div>
-        <div>
-          <strong>최고 달성 단계:</strong>
-          {starData[stats.maxStarLevel]?.starLevel || "0성"}
-        </div>
-        <div>
-          <strong>총 시도:</strong> {stats.attempt.toLocaleString()}회
-        </div>
-        <div>
-          <strong>현재 강화 시도 비용:</strong> {currentCost.toLocaleString()} 메소
-        </div>
-        <div>
-          <strong>총 사용 비용:</strong> {stats.totalCost.toLocaleString()} 메소
-        </div>
-      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>강화 단계</th>
-            <th>성공률</th>
-            <th>파괴률</th>
-            <th>시도 횟수</th>
-            <th>실제 성공률</th>
-            <th>실제 파괴률</th>
-          </tr>
-        </thead>
-        <tbody>
-          {starData.map((row, i) => {
-            const StarLevelStat = starLevelStats[i] || {
-              attempt: 0,
-              successe: 0,
-              destroy: 0,
-            };
-            const actualSuccessRate =
-              StarLevelStat.attempt > 0
-                ? ((StarLevelStat.successe / StarLevelStat.attempt) * 100).toFixed(1)
-                : "0.0";
-            const actualDestroyRate =
-              StarLevelStat.attempt > 0
-                ? ((StarLevelStat.destroy / StarLevelStat.attempt) * 100).toFixed(1)
-                : "0.0";
-
-            // 30성
-            if (i === 30) {
-              return (
-                <tr key={row.starLevel}>
-                  <td>
-                    {row.starLevel}
-                    {i === stats.maxStarLevel && <span>달성!</span>}
-                  </td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                </tr>
-              );
-            }
-
-            return (
-              <tr key={row.starLevel}>
-                <td>
-                  {row.starLevel}
-                  {i === stats.maxStarLevel && i > 0 && <span>최고</span>}
-                </td>
-                <td>{row.success}%</td>
-                <td>{row.destroy}%</td>
-                <td>{StarLevelStat.attempt.toLocaleString()}회</td>
-                <td>{actualSuccessRate}%</td>
-                <td>{actualDestroyRate}%</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      <div>
-        <button
-          onClick={tryEnhance}
-          disabled={isSimulating || current >= starData.length - 1}
-        >
-          {current >= starData.length - 1 ? "30성 달성!" : "강화 시도"}
-        </button>
-        <button
-          onClick={() => bulkSimulate(10000)}
-          disabled={isSimulating || current >= starData.length - 1}
-        >
-          10,000번 시뮬레이션
-        </button>
-        <button
-          onClick={() => bulkSimulate(100000)}
-          disabled={isSimulating || current >= starData.length - 1}
-        >
-          100,000번 시뮬레이션
-        </button>
-        <button
-          onClick={() => bulkSimulate(1000000)}
-          disabled={isSimulating || current >= starData.length - 1}
-        >
-          1,000,000번 시뮬레이션
-        </button>
-        <button onClick={reset}>초기화</button>
-        {isSimulating && <span>시뮬레이션 중...</span>}
-      </div>
-
-      <div>
-        <label>
-          목표 강화 수치:
-          <input
-            type="number"
-            value={targetStarLevel}
-            onChange={(e) => setTargetStarLevel(Number(e.target.value))}
-            min={1}
-            max={30}
+        {/* 통계 및 차트 영역 */}
+        <div className="space-y-4">
+          {/* 장비 설정 */}
+          <SimulationSetting
+            equipLevel={equipLevel}
+            setEquipLevel={setEquipLevel}
+            targetStarLevel={targetStarLevel}
+            setTargetStarLevel={setTargetStarLevel}
           />
-          성
-        </label>
+          {/* 시뮬레이션 통계 */}
+          <SimulationStats current={current} stats={stats} />
+          {/* 시뮬레이션 컨트롤 */}
+          <SimulationControl
+            current={current}
+            isSimulating={isSimulating}
+            bulkSimulate={bulkSimulate}
+            reset={reset}
+          />
+          {/* todo: 차트 영역 */}
+          <SimulationChart />
+        </div>
       </div>
-    </main>
+
+      {/* 상세 시뮬레이션 통계 */}
+      <div className="max-w-7xl mx-auto">
+        <SimulationTable starLevelStats={starLevelStats} stats={stats} />
+      </div>
+    </div>
   );
 }
