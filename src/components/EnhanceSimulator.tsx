@@ -76,8 +76,8 @@ export default function EnhanceSimulator() {
             bulkSimulate={bulkSimulate}
             reset={reset}
           />
-          {/* todo: 차트 영역 */}
-          <SimulationChart />
+          {/* 차트 영역 */}
+          <SimulationChart starLevelStats={starLevelStats} stats={stats} isSimulating={isSimulating} />
         </div>
       </div>
 
