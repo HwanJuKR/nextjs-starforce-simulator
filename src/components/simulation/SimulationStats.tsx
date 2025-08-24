@@ -1,15 +1,11 @@
 import { starData } from "@/constants/starData";
+import { useAtomValue } from "jotai";
+import { currentStarLevelAtom, statsAtom } from "@/store/atoms";
 
-interface ISimulationStats {
-  current: number;
-  stats: {
-    maxStarLevel: number;
-    attempt: number;
-    totalCost: number;
-  };
-}
+export default function SimulationStats() {
+  const currentStarLevel = useAtomValue(currentStarLevelAtom);
+  const stats = useAtomValue(statsAtom);
 
-export default function SimulationStats({ current, stats }: ISimulationStats) {
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-sm mb-3">시뮬레이션 통계</h3>
@@ -17,7 +13,7 @@ export default function SimulationStats({ current, stats }: ISimulationStats) {
         <div className="flex justify-between">
           <span className="text-gray-300">현재 단계</span>
           <span className="text-white">
-            {starData[current]?.starLevel || "0성"}
+            {starData[currentStarLevel]?.starLevel || "0성"}
           </span>
         </div>
         <div className="flex justify-between">

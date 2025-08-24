@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Provider } from "jotai";
 
 export const metadata: Metadata = {
-  title: "",
-  description: "",
+  title: "스타포스 강화 시뮬레이터",
+  description: "스타포스 강화 시뮬레이터",
 };
 
 export default function RootLayout({
@@ -11,9 +12,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <Provider>
+          {children}
+        </Provider>
+      </body>
     </html>
   );
 }

@@ -1,8 +1,13 @@
-export default function EnhanceStarLevel({ current }: { current: number }) {
+import { useAtomValue } from "jotai";
+import { currentStarLevelAtom } from "@/store/atoms";
+
+export default function EnhanceStarLevel() {
+  const currentStarLevel = useAtomValue(currentStarLevelAtom);
+
   const renderStar = () => {
     const star = [];
 
-    for (let i = 0; i < current; i++) {
+    for (let i = 0; i < currentStarLevel; i++) {
       star.push(
         <span
           key={`filled-${i}`}
@@ -13,7 +18,7 @@ export default function EnhanceStarLevel({ current }: { current: number }) {
       );
     }
 
-    for (let i = current; i < 30; i++) {
+    for (let i = currentStarLevel; i < 30; i++) {
       star.push(
         <span
           key={`empty-${i}`}
@@ -34,11 +39,11 @@ export default function EnhanceStarLevel({ current }: { current: number }) {
       </div>
 
       <div className="flex items-center justify-center space-x-3 bg-gray-700 rounded-lg p-3">
-        <span className="text-yellow-400 font-bold">⭐ {current}</span>
-        {current < 30 && (
+        <span className="text-yellow-400 font-bold">⭐ {currentStarLevel}</span>
+        {currentStarLevel < 30 && (
           <>
             <span className="text-gray-400">→</span>
-            <span className="text-white font-bold">⭐ {current + 1}</span>
+            <span className="text-white font-bold">⭐ {currentStarLevel + 1}</span>
           </>
         )}
       </div>
