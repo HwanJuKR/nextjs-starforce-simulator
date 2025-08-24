@@ -1,39 +1,34 @@
 import { starData } from "@/constants/starData";
+import { useAtomValue } from "jotai";
+import { currentStarLevelAtom, isSimulatingAtom } from "@/store/atoms";
+import useEnhance from "@/hooks/useEnhance";
 
-interface ISimulationControl {
-  current: number;
-  isSimulating: boolean;
-  bulkSimulate: (count: number) => void;
-  reset: () => void;
-}
+export default function SimulationControl() {
+  const currentStarLevel = useAtomValue(currentStarLevelAtom);
+  const isSimulating = useAtomValue(isSimulatingAtom);
+  const { bulkSimulate, reset } = useEnhance();
 
-export default function SimulationControl({
-  current,
-  isSimulating,
-  bulkSimulate,
-  reset,
-}: ISimulationControl) {
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-sm mb-3">시뮬레이션</h3>
       <div className="space-y-2">
         <button
           onClick={() => bulkSimulate(10000)}
-          disabled={isSimulating || current >= starData.length - 1}
+          disabled={isSimulating || currentStarLevel >= starData.length - 1}
           className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
         >
           10,000번 시뮬레이션
         </button>
         <button
           onClick={() => bulkSimulate(100000)}
-          disabled={isSimulating || current >= starData.length - 1}
+          disabled={isSimulating || currentStarLevel >= starData.length - 1}
           className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
         >
           100,000번 시뮬레이션
         </button>
         <button
           onClick={() => bulkSimulate(1000000)}
-          disabled={isSimulating || current >= starData.length - 1}
+          disabled={isSimulating || currentStarLevel >= starData.length - 1}
           className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
         >
           1,000,000번 시뮬레이션

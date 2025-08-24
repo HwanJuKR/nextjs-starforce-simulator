@@ -1,6 +1,4 @@
-interface IEnhanceCost {
-  (equipLevel: number, starLevel: number): number;
-}
+import type { IEvent } from "@/store/atoms";
 
 /**
  * 스타포스 강화 비용 계산
@@ -12,9 +10,14 @@ interface IEnhanceCost {
  * L: 장비의 착용 가능 레벨
  * S: 현재 스타포스 강화 레벨
  * 결과는 십의 자리에서 반올림
+ *
  */
-export default function useCost() {
-  // 스타포스 레벨별 분모
+
+// 기본 비용 계산
+export const calculateBaseCost = (
+  equipLevel: number,
+  starLevel: number
+): number => {
   const denominatorMap: Record<number, number> = {
     0: 36,
     1: 36,
@@ -49,17 +52,34 @@ export default function useCost() {
     30: 200,
   };
 
-  const enhanceCost: IEnhanceCost = (equipLevel, starLevel) => {
-    const denominator = denominatorMap[starLevel];
+  const denominator = denominatorMap[starLevel];
 
-    if (!denominator) return 0;
+  if (!denominator) return 0;
 
-    // 0~9성은 지수 1, 10성 이상은 2.7
-    const pow = starLevel <= 9 ? 1 : 2.7;
-    const numerator = 1000 + Math.pow(equipLevel, 3) * Math.pow(starLevel + 1, pow);
+  // 0~9성은 지수 1, 10성 이상은 2.7
+  const pow = starLevel <= 9 ? 1 : 2.7;
+  const numerator =
+    1000 + Math.pow(equipLevel, 3) * Math.pow(starLevel + 1, pow);
 
-    return Math.round(numerator / denominator / 10) * 10;
-  };
+  return Math.round(numerator / denominator / 10) * 10;
+};
 
-  return enhanceCost;
-}
+// 이벤트 할인
+export const applyEventDiscount = (baseCost: number, event: IEvent): number => {
+  if (event.costDiscount || event.shiningStarforce) {
+    return Math.round(baseCost * 0.7);
+  }
+
+  return baseCost;
+};
+
+// 최종 비용 계산
+export const calculateEnhanceCost = (
+  equipLevel: number,
+  starLevel: number,
+  event: IEvent
+): number => {
+  const baseCost = calculateBaseCost(equipLevel, starLevel);
+
+  return applyEventDiscount(baseCost, event);
+};

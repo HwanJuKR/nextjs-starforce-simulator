@@ -1,20 +1,11 @@
 import { starData } from "@/constants/starData";
+import { useAtomValue } from "jotai";
+import { starLevelStatsAtom, statsAtom } from "@/store/atoms";
 
-interface ISimulationTable {
-  starLevelStats: Array<{
-    attempt: number;
-    successe: number;
-    destroy: number;
-  }>;
-  stats: {
-    maxStarLevel: number;
-  };
-}
+export default function SimulationTable() {
+  const starLevelStats = useAtomValue(starLevelStatsAtom);
+  const stats = useAtomValue(statsAtom);
 
-export default function SimulationTable({
-  starLevelStats,
-  stats,
-}: ISimulationTable) {
   return (
     <div className="mt-8 bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-lg mb-4">상세 시뮬레이션 통계</h3>
@@ -54,13 +45,13 @@ export default function SimulationTable({
             {starData.map((item, index) => {
               const StarLevelStat = starLevelStats[index] || {
                 attempt: 0,
-                successe: 0,
+                success: 0,
                 destroy: 0,
               };
               const realSuccessRate =
                 StarLevelStat.attempt > 0
                   ? (
-                      (StarLevelStat.successe / StarLevelStat.attempt) *
+                      (StarLevelStat.success / StarLevelStat.attempt) *
                       100
                     ).toFixed(1)
                   : "0.0";

@@ -1,4 +1,9 @@
-export default function EnhanceCost({ currentCost }: { currentCost: number }) {
+import { useAtomValue } from "jotai";
+import { currentCostAtom } from "@/store/atoms";
+
+export default function EnhanceCost() {
+  const currentCost = useAtomValue(currentCostAtom);
+
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-sm mb-3">강화 비용</h3>

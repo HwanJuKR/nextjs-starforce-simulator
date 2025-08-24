@@ -12,26 +12,7 @@ import SimulationControl from "@/components/simulation/SimulationControl";
 import SimulationSetting from "@/components/simulation/SimulationSetting";
 import SimulationStats from "@/components/simulation/SimulationStats";
 import SimulationTable from "@/components/simulation/SimulationTable";
-import useCost from "@/hooks/useCost";
-import useEnhance from "@/hooks/useEnhance";
-
 export default function EnhanceSimulator() {
-  const {
-    current,
-    isSimulating,
-    stats,
-    starLevelStats,
-    targetStarLevel,
-    setTargetStarLevel,
-    equipLevel,
-    setEquipLevel,
-    tryEnhance,
-    bulkSimulate,
-    reset,
-  } = useEnhance();
-
-  const enhanceCost = useCost();
-  const currentCost = enhanceCost(equipLevel, current);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
@@ -43,47 +24,33 @@ export default function EnhanceSimulator() {
           {/* 장비 아이템 영역 */}
           <EnhanceItem />
           {/* 별 표시 영역 */}
-          <EnhanceStarLevel current={current} />
+          <EnhanceStarLevel />
           {/* 확률 영역 */}
-          <EnhanceChance current={current} />
+          <EnhanceChance />
           {/* 사용 재화 영역 */}
-          <EnhanceCost currentCost={currentCost} />
-          {/* todo: 강화 이벤트 영역 */}
+          <EnhanceCost />
+          {/* 강화 이벤트 영역 */}
           <EnhanceEvent />
           {/* 강화하기 영역 */}
-          <EnhanceControl
-            current={current}
-            isSimulating={isSimulating}
-            tryEnhance={tryEnhance}
-          />
+          <EnhanceControl />
         </div>
 
         {/* 통계 및 차트 영역 */}
         <div className="space-y-4">
           {/* 장비 설정 */}
-          <SimulationSetting
-            equipLevel={equipLevel}
-            setEquipLevel={setEquipLevel}
-            targetStarLevel={targetStarLevel}
-            setTargetStarLevel={setTargetStarLevel}
-          />
+          <SimulationSetting />
           {/* 시뮬레이션 통계 */}
-          <SimulationStats current={current} stats={stats} />
+          <SimulationStats />
           {/* 시뮬레이션 컨트롤 */}
-          <SimulationControl
-            current={current}
-            isSimulating={isSimulating}
-            bulkSimulate={bulkSimulate}
-            reset={reset}
-          />
+          <SimulationControl />
           {/* 차트 영역 */}
-          <SimulationChart starLevelStats={starLevelStats} stats={stats} isSimulating={isSimulating} />
+          <SimulationChart />
         </div>
       </div>
 
       {/* 상세 시뮬레이션 통계 */}
       <div className="max-w-7xl mx-auto">
-        <SimulationTable starLevelStats={starLevelStats} stats={stats} />
+        <SimulationTable />
       </div>
     </div>
   );

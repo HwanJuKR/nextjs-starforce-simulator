@@ -1,49 +1,81 @@
 import { starData, MAX_STAR_FORCE } from "@/constants/starData";
-import { useState } from "react";
-import useCost from "./useCost";
+import { useAtom, useAtomValue } from "jotai";
+import { 
+  currentStarLevelAtom, 
+  targetStarLevelAtom, 
+  equipLevelAtom, 
+  isSimulatingAtom, 
+  statsAtom, 
+  starLevelStatsAtom,
+  eventAtom,
+  type IEvent
+} from "@/store/atoms";
+import { calculateEnhanceCost } from "./useCost";
 
 interface IEnhanceResult {
   starLevel: number;
   result: string;
   isSuccess: boolean;
   isDestroy: boolean;
-  chance: number;
+  randomValue: number;
 }
 
+// 강화 확률 계산 함수
+export const calculateEnhanceChance = (starLevel: number, event: IEvent) => {
+  const { success, fail, destroy } = starData[starLevel];
+
+  // 5, 10, 15성에서 perfectSuccess 이벤트가 활성화된 경우 성공확률 100%
+  const isPerfectSuccessLevel = [5, 10, 15].includes(starLevel);
+  const isPerfectSuccess = event.perfectSuccess && isPerfectSuccessLevel;
+
+  // 21성 이하에서 reducedDestroy 또는 shiningStarforce 이벤트가 활성화된 경우 파괴 확률 30% 감소
+  const isReducedDestroyLevel = starLevel <= 21;
+  const destroyChance = 
+    (event.reducedDestroy || event.shiningStarforce) && isReducedDestroyLevel
+      ? destroy * 0.7
+      : destroy;
+
+  return {
+    success: isPerfectSuccess ? 100 : success,
+    fail: isPerfectSuccess ? 0 : fail,
+    destroy: isPerfectSuccess ? 0 : destroyChance,
+    isPerfectSuccess,
+    destroyReduction: destroyChance < destroy
+  };
+};
+
 export default function useEnhance() {
-  const [current, setCurrent] = useState(0);
-  const [targetStarLevel, setTargetStarLevel] = useState(30);
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [stats, setStats] = useState({
-    attempt: 0,
-    successe: 0,
-    destroy: 0,
-    maxStarLevel: 0,
-    totalCost: 0,
-  });
-  const [starLevelStats, setStarLevelStats] = useState(
-    Array.from({ length: 31 }, () => ({ attempt: 0, successe: 0, destroy: 0 }))
-  );
-  
-  const [equipLevel, setEquipLevel] = useState(150);
-  const enhanceCost = useCost();
+  const [currentStarLevel, setCurrentStarLevel] = useAtom(currentStarLevelAtom);
+  const [targetStarLevel, setTargetStarLevel] = useAtom(targetStarLevelAtom);
+  const [equipLevel, setEquipLevel] = useAtom(equipLevelAtom);
+  const [isSimulating, setIsSimulating] = useAtom(isSimulatingAtom);
+  const [stats, setStats] = useAtom(statsAtom);
+  const [starLevelStats, setStarLevelStats] = useAtom(starLevelStatsAtom);
+  const event = useAtomValue(eventAtom);
 
   const enhance = (currentStarLevel: number): IEnhanceResult => {
     const { success, fail } = starData[currentStarLevel];
-    const chance = Math.random() * 100;
+    const chance = calculateEnhanceChance(currentStarLevel, event);
+    const randomValue = Math.random() * 100;
     let starLevel = currentStarLevel;
     let result = "";
 
-    if (chance < success) {
-      starLevel = currentStarLevel + 1;
-      if (starLevel >= starData.length - 1) {
-        result = `${starData[currentStarLevel].starLevel} → 성공! 30성 달성!`;
-      } else {
+    if (chance.isPerfectSuccess || randomValue < success) {
+      // 10성 이하에서 1+1 이벤트가 활성화된 경우 2단계 상승
+      if (event.doubleEnhance && currentStarLevel <= 10) {
+        starLevel = currentStarLevel + 2;
         result = `${starData[currentStarLevel].starLevel} → 성공!`;
+      } else {
+        starLevel = currentStarLevel + 1;
+        if (starLevel >= starData.length - 1) {
+          result = `${starData[currentStarLevel].starLevel} → 성공! 30성 달성!`;
+        } else {
+          result = `${starData[currentStarLevel].starLevel} → 성공!`;
+        }
       }
-    } else if (chance < success + fail) {
+    } else if (randomValue < success + fail) {
       result = `${starData[currentStarLevel].starLevel} → 실패(유지)`;
-    } else {
+    } else if (randomValue < success + fail + chance.destroy) {
       starLevel = 12;
       result = `${starData[currentStarLevel].starLevel} → 파괴! 12성으로 다운`;
     }
@@ -51,25 +83,25 @@ export default function useEnhance() {
     return {
       starLevel,
       result,
-      isSuccess: chance < success,
-      isDestroy: chance >= success + fail,
-      chance,
+      isSuccess: chance.isPerfectSuccess || randomValue < success,
+      isDestroy: randomValue >= success + fail && randomValue < success + fail + chance.destroy,
+      randomValue,
     };
   };
 
   const tryEnhance = () => {
-    if (current >= MAX_STAR_FORCE) return;
+    if (currentStarLevel >= MAX_STAR_FORCE) return;
 
-    const currentStarLevel = current;
-    const cost = enhanceCost(equipLevel, currentStarLevel);
-    const result = enhance(currentStarLevel);
-    setCurrent(result.starLevel);
+    const starLevel = currentStarLevel;
+    const cost = calculateEnhanceCost(equipLevel, starLevel, event);
+    const result = enhance(starLevel);
+    setCurrentStarLevel(result.starLevel);
 
     // 통계 업데이트
     setStats((prev) => ({
       ...prev,
       attempt: prev.attempt + 1,
-      successe: result.isSuccess ? prev.successe + 1 : prev.successe,
+      success: result.isSuccess ? prev.success + 1 : prev.success,
       destroy: result.isDestroy ? prev.destroy + 1 : prev.destroy,
       maxStarLevel: Math.max(prev.maxStarLevel, result.starLevel),
       totalCost: prev.totalCost + cost,
@@ -81,7 +113,7 @@ export default function useEnhance() {
       const starLevelStat = newStats[currentStarLevel];
       newStats[currentStarLevel] = {
         attempt: starLevelStat.attempt + 1,
-        successe: starLevelStat.successe + (result.isSuccess ? 1 : 0),
+        success: starLevelStat.success + (result.isSuccess ? 1 : 0),
         destroy: starLevelStat.destroy + (result.isDestroy ? 1 : 0),
       };
       return newStats;
@@ -90,44 +122,44 @@ export default function useEnhance() {
 
   const bulkSimulate = async (count: number) => {
     setIsSimulating(true);
-    let tempCurrent = current;
+    let tempCurrentStarLevel = currentStarLevel;
     const tempStats = { ...stats };
     const tempStarLevelStats = [...starLevelStats];
     const checkPoint = 1000;
 
     for (let i = 0; i < count; i++) {
-      if (tempCurrent >= MAX_STAR_FORCE) {
+      if (tempCurrentStarLevel >= MAX_STAR_FORCE) {
         break;
       }
 
       // 목표 수치 달성 체크
-      if (tempCurrent >= targetStarLevel) {
+      if (tempCurrentStarLevel >= targetStarLevel) {
         break;
       }
 
-      const currentStarLevel = tempCurrent;
-      const cost = enhanceCost(equipLevel, currentStarLevel);
-      const result = enhance(tempCurrent);
+      const starLevel = tempCurrentStarLevel;
+      const cost = calculateEnhanceCost(equipLevel, starLevel, event);
+      const result = enhance(tempCurrentStarLevel);
       tempStats.attempt++;
       tempStats.totalCost += cost;
-      tempStarLevelStats[tempCurrent].attempt++;
-      tempCurrent = result.starLevel;
-      tempStats.maxStarLevel = Math.max(tempStats.maxStarLevel, tempCurrent);
+      tempStarLevelStats[tempCurrentStarLevel].attempt++;
+      tempCurrentStarLevel = result.starLevel;
+      tempStats.maxStarLevel = Math.max(tempStats.maxStarLevel, tempCurrentStarLevel);
 
       if (result.isSuccess) {
-        tempStats.successe++;
-        tempStarLevelStats[currentStarLevel].successe++;
+        tempStats.success++;
+        tempStarLevelStats[starLevel].success++;
       } else if (result.isDestroy) {
         tempStats.destroy++;
-        tempStarLevelStats[currentStarLevel].destroy++;
+        tempStarLevelStats[starLevel].destroy++;
       }
 
-      if (tempCurrent >= MAX_STAR_FORCE) {
+      if (tempCurrentStarLevel >= MAX_STAR_FORCE) {
         break;
       }
 
       if ((i + 1) % checkPoint === 0) {
-        setCurrent(tempCurrent);
+        setCurrentStarLevel(tempCurrentStarLevel);
         setStats({ ...tempStats });
         setStarLevelStats([...tempStarLevelStats]);
 
@@ -135,26 +167,32 @@ export default function useEnhance() {
       }
     }
 
-    setCurrent(tempCurrent);
+    setCurrentStarLevel(tempCurrentStarLevel);
     setStats(tempStats);
     setStarLevelStats(tempStarLevelStats);
     setIsSimulating(false);
   };
 
   const reset = () => {
-    setCurrent(0);
-    setStats({ attempt: 0, destroy: 0, successe: 0, maxStarLevel: 0, totalCost: 0 });
+    setCurrentStarLevel(0);
+    setStats({
+      attempt: 0,
+      destroy: 0,
+      success: 0,
+      maxStarLevel: 0,
+      totalCost: 0,
+    });
     setStarLevelStats(
       Array.from({ length: 31 }, () => ({
         attempt: 0,
-        successe: 0,
+        success: 0,
         destroy: 0,
       }))
     );
   };
 
   return {
-    current,
+    currentStarLevel,
     isSimulating,
     stats,
     starLevelStats,

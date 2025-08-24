@@ -1,16 +1,10 @@
-interface ISimulationSetting {
-  equipLevel: number;
-  setEquipLevel: (level: number) => void;
-  targetStarLevel: number;
-  setTargetStarLevel: (level: number) => void;
-}
+import { useAtom } from "jotai";
+import { equipLevelAtom, targetStarLevelAtom } from "@/store/atoms";
 
-export default function SimulationSetting({
-  equipLevel,
-  setEquipLevel,
-  targetStarLevel,
-  setTargetStarLevel,
-}: ISimulationSetting) {
+export default function SimulationSetting() {
+  const [equipLevel, setEquipLevel] = useAtom(equipLevelAtom);
+  const [targetStarLevel, setTargetStarLevel] = useAtom(targetStarLevelAtom);
+
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-sm mb-3">장비 설정</h3>

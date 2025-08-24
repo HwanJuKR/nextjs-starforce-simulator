@@ -14,30 +14,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { starData } from "@/constants/starData";
-
-interface ISimulationChart {
-  starLevelStats: Array<{
-    attempt: number;
-    successe: number;
-    destroy: number;
-  }>;
-  stats: {
-    attempt: number;
-    successe: number;
-    destroy: number;
-    maxStarLevel: number;
-    totalCost: number;
-  };
-  isSimulating: boolean;
-}
+import { useAtomValue } from "jotai";
+import { starLevelStatsAtom, statsAtom, isSimulatingAtom } from "@/store/atoms";
 
 type ChartType = "attempt" | "successRate";
 
-export default function SimulationChart({
-  starLevelStats,
-  stats,
-  isSimulating,
-}: ISimulationChart) {
+export default function SimulationChart() {
+  const starLevelStats = useAtomValue(starLevelStatsAtom);
+  const stats = useAtomValue(statsAtom);
+  const isSimulating = useAtomValue(isSimulatingAtom);
   const [currentChart, setCurrentChart] = useState<ChartType>("attempt");
 
   // 레벨 별 시도 횟수 (12성 부터)
@@ -48,8 +33,8 @@ export default function SimulationChart({
       return {
         starLevel: `${index}성`,
         시도: stat.attempt,
-        성공: stat.successe,
-        실패: stat.attempt - stat.successe - stat.destroy,
+        성공: stat.success,
+        실패: stat.attempt - stat.success - stat.destroy,
         파괴: stat.destroy,
       };
     })
@@ -61,7 +46,7 @@ export default function SimulationChart({
       if (stat.attempt === 0 || index < 12) return null;
 
       const successRate = starData[index]?.success || 0;
-      const realSuccessRate = (stat.successe / stat.attempt) * 100 || 0;
+      const realSuccessRate = (stat.success / stat.attempt) * 100 || 0;
 
       return {
         starLevel: `${index}성`,
