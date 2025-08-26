@@ -16,8 +16,7 @@ import {
 import { starData } from "@/constants/starData";
 import { useAtomValue } from "jotai";
 import { starLevelStatsAtom, statsAtom, isSimulatingAtom } from "@/store/atoms";
-
-type ChartType = "attempt" | "successRate";
+import { ChartType } from "@/types";
 
 export default function SimulationChart() {
   const starLevelStats = useAtomValue(starLevelStatsAtom);

@@ -71,7 +71,7 @@ export default function SimulationTable() {
                     className="border-b border-gray-700 hover:bg-gray-700"
                   >
                     <td className="p-2 text-yellow-400 font-bold">
-                      {item.starLevel}
+                      {item.starLevel + "성"}
                       {index === stats.maxStarLevel && (
                         <span className="ml-2 text-green-400">달성!</span>
                       )}
@@ -91,7 +91,7 @@ export default function SimulationTable() {
                   className="border-b border-gray-700 hover:bg-gray-700"
                 >
                   <td className="p-2 text-yellow-400 font-bold">
-                    {item.starLevel}
+                    {item.starLevel + "성"}
                     {index === stats.maxStarLevel && index > 0 && (
                       <span className="ml-2 text-green-400">최고</span>
                     )}

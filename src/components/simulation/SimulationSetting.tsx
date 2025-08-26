@@ -1,5 +1,6 @@
 import { useAtom } from "jotai";
 import { equipLevelAtom, targetStarLevelAtom } from "@/store/atoms";
+import { toStarLevel, toEquipLevel } from "@/types";
 
 export default function SimulationSetting() {
   const [equipLevel, setEquipLevel] = useAtom(equipLevelAtom);
@@ -14,7 +15,7 @@ export default function SimulationSetting() {
           <input
             type="number"
             value={equipLevel}
-            onChange={(e) => setEquipLevel(Number(e.target.value))}
+            onChange={(e) => setEquipLevel(toEquipLevel(Number(e.target.value)))}
             min={1}
             max={300}
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
@@ -27,7 +28,7 @@ export default function SimulationSetting() {
           <input
             type="number"
             value={targetStarLevel}
-            onChange={(e) => setTargetStarLevel(Number(e.target.value))}
+            onChange={(e) => setTargetStarLevel(toStarLevel(Number(e.target.value)))}
             min={1}
             max={30}
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"

@@ -1,4 +1,4 @@
-import type { IEvent } from "@/store/atoms";
+import type { EquipLevel, IEvent, StarLevel } from "@/types";
 
 /**
  * 스타포스 강화 비용 계산
@@ -15,10 +15,10 @@ import type { IEvent } from "@/store/atoms";
 
 // 기본 비용 계산
 export const calculateBaseCost = (
-  equipLevel: number,
-  starLevel: number
+  equipLevel: EquipLevel,
+  starLevel: StarLevel
 ): number => {
-  const denominatorMap: Record<number, number> = {
+  const denominatorMap: Record<StarLevel, number> = {
     0: 36,
     1: 36,
     2: 36,
@@ -75,8 +75,8 @@ export const applyEventDiscount = (baseCost: number, event: IEvent): number => {
 
 // 최종 비용 계산
 export const calculateEnhanceCost = (
-  equipLevel: number,
-  starLevel: number,
+  equipLevel: EquipLevel,
+  starLevel: StarLevel,
   event: IEvent
 ): number => {
   const baseCost = calculateBaseCost(equipLevel, starLevel);

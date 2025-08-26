@@ -8,20 +8,12 @@ import {
   statsAtom, 
   starLevelStatsAtom,
   eventAtom,
-  type IEvent
 } from "@/store/atoms";
 import { calculateEnhanceCost } from "./useCost";
-
-interface IEnhanceResult {
-  starLevel: number;
-  result: string;
-  isSuccess: boolean;
-  isDestroy: boolean;
-  randomValue: number;
-}
+import { IEnhanceResult, IEvent, IEnhanceChance, StarLevel, toStarLevel } from "@/types";
 
 // 강화 확률 계산 함수
-export const calculateEnhanceChance = (starLevel: number, event: IEvent) => {
+export const calculateEnhanceChance = (starLevel: StarLevel, event: IEvent): IEnhanceChance => {
   const { success, fail, destroy } = starData[starLevel];
 
   // 5, 10, 15성에서 perfectSuccess 이벤트가 활성화된 경우 성공확률 100%
@@ -53,7 +45,7 @@ export default function useEnhance() {
   const [starLevelStats, setStarLevelStats] = useAtom(starLevelStatsAtom);
   const event = useAtomValue(eventAtom);
 
-  const enhance = (currentStarLevel: number): IEnhanceResult => {
+  const enhance = (currentStarLevel: StarLevel): IEnhanceResult => {
     const { success, fail } = starData[currentStarLevel];
     const chance = calculateEnhanceChance(currentStarLevel, event);
     const randomValue = Math.random() * 100;
@@ -63,21 +55,21 @@ export default function useEnhance() {
     if (chance.isPerfectSuccess || randomValue < success) {
       // 10성 이하에서 1+1 이벤트가 활성화된 경우 2단계 상승
       if (event.doubleEnhance && currentStarLevel <= 10) {
-        starLevel = currentStarLevel + 2;
-        result = `${starData[currentStarLevel].starLevel} → 성공!`;
+        starLevel = toStarLevel(currentStarLevel + 2);
+        result = `${starData[currentStarLevel].starLevel + "성"} → 성공!`;
       } else {
-        starLevel = currentStarLevel + 1;
+        starLevel = toStarLevel(currentStarLevel + 1);
         if (starLevel >= starData.length - 1) {
-          result = `${starData[currentStarLevel].starLevel} → 성공! 30성 달성!`;
+          result = `${starData[currentStarLevel].starLevel + "성"} → 성공! 30성 달성!`;
         } else {
-          result = `${starData[currentStarLevel].starLevel} → 성공!`;
+          result = `${starData[currentStarLevel].starLevel + "성"} → 성공!`;
         }
       }
     } else if (randomValue < success + fail) {
-      result = `${starData[currentStarLevel].starLevel} → 실패(유지)`;
+      result = `${starData[currentStarLevel].starLevel + "성"} → 실패(유지)`;
     } else if (randomValue < success + fail + chance.destroy) {
       starLevel = 12;
-      result = `${starData[currentStarLevel].starLevel} → 파괴! 12성으로 다운`;
+      result = `${starData[currentStarLevel].starLevel + "성"} → 파괴! 12성으로 다운`;
     }
 
     return {
