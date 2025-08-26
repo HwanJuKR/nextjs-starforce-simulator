@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
-import { eventAtom, type IEvent } from '@/store/atoms';
-
-export type { IEvent };
+import { eventAtom } from '@/store/atoms';
+import { IEvent } from '@/types';
 
 export default function useEvent() {
   const [event, setEvent] = useAtom(eventAtom);
