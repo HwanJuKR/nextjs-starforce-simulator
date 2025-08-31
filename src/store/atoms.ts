@@ -16,6 +16,8 @@ export const currentStarLevelAtom = atom<StarLevel>(0);
 export const targetStarLevelAtom = atom<StarLevel>(30);
 export const equipLevelAtom = atom<EquipLevel>(150);
 export const isSimulatingAtom = atom(false);
+export const preventDestroyAtom = atom(false);
+export const starCatchAtom = atom(false);
 
 export const statsAtom = atom<IStats>({
   attempt: 0,
@@ -34,6 +36,7 @@ export const currentCostAtom = atom((get) => {
   const equipLevel = get(equipLevelAtom);
   const currentStarLevel = get(currentStarLevelAtom);
   const event = get(eventAtom);
+  const preventDestroy = get(preventDestroyAtom);
 
-  return calculateEnhanceCost(equipLevel, currentStarLevel, event);
+  return calculateEnhanceCost(equipLevel, currentStarLevel, event, preventDestroy);
 });
