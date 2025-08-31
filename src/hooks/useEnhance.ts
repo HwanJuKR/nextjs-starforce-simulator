@@ -8,12 +8,14 @@ import {
   statsAtom, 
   starLevelStatsAtom,
   eventAtom,
+  preventDestroyAtom,
+  starCatchAtom,
 } from "@/store/atoms";
 import { calculateEnhanceCost } from "./useCost";
 import { IEnhanceResult, IEvent, IEnhanceChance, StarLevel, toStarLevel } from "@/types";
 
 // 강화 확률 계산 함수
-export const calculateEnhanceChance = (starLevel: StarLevel, event: IEvent): IEnhanceChance => {
+export const calculateEnhanceChance = (starLevel: StarLevel, event: IEvent, preventDestroy: boolean, starCatch: boolean): IEnhanceChance => {
   const { success, fail, destroy } = starData[starLevel];
 
   // 5, 10, 15성에서 perfectSuccess 이벤트가 활성화된 경우 성공확률 100%
@@ -22,17 +24,39 @@ export const calculateEnhanceChance = (starLevel: StarLevel, event: IEvent): IEn
 
   // 21성 이하에서 reducedDestroy 또는 shiningStarforce 이벤트가 활성화된 경우 파괴 확률 30% 감소
   const isReducedDestroyLevel = starLevel <= 21;
-  const destroyChance = 
+  let destroyChance = 
     (event.reducedDestroy || event.shiningStarforce) && isReducedDestroyLevel
       ? destroy * 0.7
       : destroy;
 
+  // 15성부터 17성까지 파괴 방지 옵션이 활성화된 경우 파괴 확률 0%
+  if (preventDestroy && starLevel >= 15 && starLevel <= 17) {
+    destroyChance = 0;
+  }
+
+  let finalSuccess = isPerfectSuccess ? 100 : success;
+  let finalDestroy = isPerfectSuccess ? 0 : destroyChance;
+  let finalFail = isPerfectSuccess ? 0 : fail;
+
+  // 스타캐치 적용
+  if (starCatch && !isPerfectSuccess) {
+    // 성공률 1.05배 상승
+    finalSuccess = success * 1.05;
+    
+    // 파괴확률 감소: 성공률 × 0.05 × (파괴/(파괴+유지))
+    const destroyReduce = success * 0.05 * (destroy / (destroy + fail));
+    finalDestroy = destroyChance - destroyReduce;
+    
+    // 실패확률 조정
+    finalFail = 100 - finalSuccess - finalDestroy;
+  }
+
   return {
-    success: isPerfectSuccess ? 100 : success,
-    fail: isPerfectSuccess ? 0 : fail,
-    destroy: isPerfectSuccess ? 0 : destroyChance,
+    success: finalSuccess,
+    fail: finalFail,
+    destroy: finalDestroy,
     isPerfectSuccess,
-    destroyReduction: destroyChance < destroy
+    destroyReduction: finalDestroy < destroy
   };
 };
 
@@ -44,15 +68,16 @@ export default function useEnhance() {
   const [stats, setStats] = useAtom(statsAtom);
   const [starLevelStats, setStarLevelStats] = useAtom(starLevelStatsAtom);
   const event = useAtomValue(eventAtom);
+  const preventDestroy = useAtomValue(preventDestroyAtom);
+  const starCatch = useAtomValue(starCatchAtom);
 
   const enhance = (currentStarLevel: StarLevel): IEnhanceResult => {
-    const { success, fail } = starData[currentStarLevel];
-    const chance = calculateEnhanceChance(currentStarLevel, event);
+    const chance = calculateEnhanceChance(currentStarLevel, event, preventDestroy, starCatch);
     const randomValue = Math.random() * 100;
     let starLevel = currentStarLevel;
     let result = "";
 
-    if (chance.isPerfectSuccess || randomValue < success) {
+    if (chance.isPerfectSuccess || randomValue < chance.success) {
       // 10성 이하에서 1+1 이벤트가 활성화된 경우 2단계 상승
       if (event.doubleEnhance && currentStarLevel <= 10) {
         starLevel = toStarLevel(currentStarLevel + 2);
@@ -65,9 +90,9 @@ export default function useEnhance() {
           result = `${starData[currentStarLevel].starLevel + "성"} → 성공!`;
         }
       }
-    } else if (randomValue < success + fail) {
+    } else if (randomValue < chance.success + chance.fail) {
       result = `${starData[currentStarLevel].starLevel + "성"} → 실패(유지)`;
-    } else if (randomValue < success + fail + chance.destroy) {
+    } else if (randomValue < chance.success + chance.fail + chance.destroy) {
       starLevel = 12;
       result = `${starData[currentStarLevel].starLevel + "성"} → 파괴! 12성으로 다운`;
     }
@@ -75,8 +100,8 @@ export default function useEnhance() {
     return {
       starLevel,
       result,
-      isSuccess: chance.isPerfectSuccess || randomValue < success,
-      isDestroy: randomValue >= success + fail && randomValue < success + fail + chance.destroy,
+      isSuccess: chance.isPerfectSuccess || randomValue < chance.success,
+      isDestroy: randomValue >= chance.success + chance.fail && randomValue < chance.success + chance.fail + chance.destroy,
       randomValue,
     };
   };
@@ -85,7 +110,7 @@ export default function useEnhance() {
     if (currentStarLevel >= MAX_STAR_FORCE) return;
 
     const starLevel = currentStarLevel;
-    const cost = calculateEnhanceCost(equipLevel, starLevel, event);
+    const cost = calculateEnhanceCost(equipLevel, starLevel, event, preventDestroy);
     const result = enhance(starLevel);
     setCurrentStarLevel(result.starLevel);
 
@@ -130,7 +155,7 @@ export default function useEnhance() {
       }
 
       const starLevel = tempCurrentStarLevel;
-      const cost = calculateEnhanceCost(equipLevel, starLevel, event);
+      const cost = calculateEnhanceCost(equipLevel, starLevel, event, preventDestroy);
       const result = enhance(tempCurrentStarLevel);
       tempStats.attempt++;
       tempStats.totalCost += cost;

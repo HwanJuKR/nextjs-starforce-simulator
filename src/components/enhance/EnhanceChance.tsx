@@ -1,11 +1,14 @@
 import { useAtomValue } from "jotai";
-import { currentStarLevelAtom, eventAtom } from "@/store/atoms";
+import { currentStarLevelAtom, eventAtom, preventDestroyAtom, starCatchAtom } from "@/store/atoms";
 import { calculateEnhanceChance } from "@/hooks/useEnhance";
 
 export default function EnhanceChance() {
   const currentStarLevel = useAtomValue(currentStarLevelAtom);
   const event = useAtomValue(eventAtom);
-  const chance = calculateEnhanceChance(currentStarLevel, event);
+  const preventDestroy = useAtomValue(preventDestroyAtom);
+  const starCatch = useAtomValue(starCatchAtom);
+  const chance = calculateEnhanceChance(currentStarLevel, event, preventDestroy, starCatch);
+  const isPreventDestroy = preventDestroy && currentStarLevel >= 15 && currentStarLevel <= 17;
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
@@ -13,9 +16,10 @@ export default function EnhanceChance() {
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-300">성공</span>
-          <span className={`${chance.isPerfectSuccess ? 'text-purple-400 font-bold' : 'text-green-400'}`}>
+          <span className={`${chance.isPerfectSuccess ? 'text-purple-400 font-bold' : starCatch ? 'text-blue-400' : 'text-green-400'}`}>
             {Math.round(chance.success)}%
             {chance.isPerfectSuccess && ' (100%)'}
+            {starCatch && !chance.isPerfectSuccess && ' (스타캐치)'}
           </span>
         </div>
         <div className="flex justify-between">
@@ -26,9 +30,16 @@ export default function EnhanceChance() {
         </div>
         <div className="flex justify-between">
           <span className="text-gray-300">파괴</span>
-          <span className={`${chance.destroyReduction ? 'text-orange-400' : 'text-red-400'}`}>
+          <span className={`${
+            isPreventDestroy 
+              ? 'text-green-400 font-bold' 
+              : chance.destroyReduction 
+                ? 'text-orange-400' 
+                : 'text-red-400'
+          }`}>
             {Math.round(chance.destroy)}%
-            {chance.destroyReduction && ` (-30%)`}
+            {isPreventDestroy && ' (파괴 방지)'}
+            {chance.destroyReduction && !isPreventDestroy && ` (-30%)`}
           </span>
         </div>
       </div>

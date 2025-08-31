@@ -11,6 +11,9 @@ import type { EquipLevel, IEvent, StarLevel } from "@/types";
  * S: 현재 스타포스 강화 레벨
  * 결과는 십의 자리에서 반올림
  *
+ * 파괴 방지 옵션 (15성 ~ 17성)
+ * - 파괴 방지 체크 시 200% 비용
+ * - 파괴 확률 0%, 성공 확률은 동일
  */
 
 // 기본 비용 계산
@@ -73,13 +76,29 @@ export const applyEventDiscount = (baseCost: number, event: IEvent): number => {
   return baseCost;
 };
 
+// 파괴 방지 비용
+export const applyPreventDestroyCost = (
+  baseCost: number,
+  starLevel: StarLevel,
+  preventDestroy: boolean
+): number => {
+  if (preventDestroy && starLevel >= 15 && starLevel <= 17) {
+    return baseCost * 2;
+  }
+  
+  return 0;
+};
+
 // 최종 비용 계산
 export const calculateEnhanceCost = (
   equipLevel: EquipLevel,
   starLevel: StarLevel,
-  event: IEvent
+  event: IEvent,
+  preventDestroy: boolean
 ): number => {
   const baseCost = calculateBaseCost(equipLevel, starLevel);
-
-  return applyEventDiscount(baseCost, event);
+  const eventDiscountCost = applyEventDiscount(baseCost, event);
+  const preventDestroyCost = applyPreventDestroyCost(baseCost, starLevel, preventDestroy);
+  
+  return eventDiscountCost + preventDestroyCost;
 };
