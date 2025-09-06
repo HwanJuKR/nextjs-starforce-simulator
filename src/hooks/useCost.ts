@@ -131,7 +131,7 @@ export const calculateEnhanceCost = (
   starLevel: StarLevel,
   event: IEvent,
   preventDestroy: boolean,
-  benefit: IBenefit = { pcRoom: false, mvpGrade: "none" }
+  benefit: IBenefit
 ): number => {
   // 1. 기본 비용 계산
   const baseCost = calculateBaseCost(equipLevel, starLevel);
