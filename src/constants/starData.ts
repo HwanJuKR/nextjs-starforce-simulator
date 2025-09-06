@@ -35,3 +35,9 @@ export const starData: IStarData[] = [
 ];
 
 export const MAX_STAR_FORCE = starData.length - 1;
+export const DESTROY_RESET_LEVEL = 12;
+export const PERFECT_SUCCESS_LEVEL = [5, 10, 15];
+export const PREVENT_DESTROY_MIN_LEVEL = 15;
+export const PREVENT_DESTROY_MAX_LEVEL = 17;
+export const REDUCED_DESTROY_MAX_LEVEL = 21;
+export const DOUBLE_ENHANCE_MAX_LEVEL = 10;

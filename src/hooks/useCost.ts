@@ -1,4 +1,13 @@
-import type { EquipLevel, IEvent, StarLevel } from "@/types";
+import type { EquipLevel, IEvent, StarLevel, IBenefit } from "@/types";
+import {
+  MVP_DISCOUNT_RATE,
+  PC_ROOM_DISCOUNT_RATE,
+  EVENT_DISCOUNT_RATE,
+} from "@/types";
+import {
+  PREVENT_DESTROY_MIN_LEVEL,
+  PREVENT_DESTROY_MAX_LEVEL,
+} from "@/constants/starData";
 
 /**
  * 스타포스 강화 비용 계산
@@ -14,6 +23,12 @@ import type { EquipLevel, IEvent, StarLevel } from "@/types";
  * 파괴 방지 옵션 (15성 ~ 17성)
  * - 파괴 방지 체크 시 200% 비용
  * - 파괴 확률 0%, 성공 확률은 동일
+ * 
+ * 혜택 적용 순서
+ * 1. 기본 비용 계산
+ * 2. PC방 + MVP 혜택 적용
+ * 3. 이벤트 할인 적용 (30% 할인)
+ * 4. 파괴 방지 비용 = 원래 기본 비용 × 2
  */
 
 // 기본 비용 계산
@@ -67,25 +82,48 @@ export const calculateBaseCost = (
   return Math.round(numerator / denominator / 10) * 10;
 };
 
-// 이벤트 할인
+// PC방 + MVP 혜택 적용
+export const applyBenefitDiscount = (
+  baseCost: number,
+  benefit: IBenefit
+): number => {
+  let discountRate = 0;
+
+  // PC방 혜택 (5%)
+  if (benefit.pcRoom) {
+    discountRate += PC_ROOM_DISCOUNT_RATE;
+  }
+
+  // MVP 혜택 (등급별)
+  discountRate += MVP_DISCOUNT_RATE[benefit.mvpGrade];
+
+  // 할인 적용 (1 - 할인율)
+  return Math.round(baseCost * (1 - discountRate));
+};
+
+// 이벤트 할인 (30% 할인)
 export const applyEventDiscount = (baseCost: number, event: IEvent): number => {
   if (event.costDiscount || event.shiningStarforce) {
-    return Math.round(baseCost * 0.7);
+    return Math.round(baseCost * EVENT_DISCOUNT_RATE);
   }
 
   return baseCost;
 };
 
-// 파괴 방지 비용
+// 파괴 방지 비용 (원래 기본 비용의 200%)
 export const applyPreventDestroyCost = (
   baseCost: number,
   starLevel: StarLevel,
   preventDestroy: boolean
 ): number => {
-  if (preventDestroy && starLevel >= 15 && starLevel <= 17) {
+  if (
+    preventDestroy &&
+    starLevel >= PREVENT_DESTROY_MIN_LEVEL &&
+    starLevel <= PREVENT_DESTROY_MAX_LEVEL
+  ) {
     return baseCost * 2;
   }
-  
+
   return 0;
 };
 
@@ -94,11 +132,24 @@ export const calculateEnhanceCost = (
   equipLevel: EquipLevel,
   starLevel: StarLevel,
   event: IEvent,
-  preventDestroy: boolean
+  preventDestroy: boolean,
+  benefit: IBenefit = { pcRoom: false, mvpGrade: "none" }
 ): number => {
+  // 1. 기본 비용 계산
   const baseCost = calculateBaseCost(equipLevel, starLevel);
-  const eventDiscountCost = applyEventDiscount(baseCost, event);
-  const preventDestroyCost = applyPreventDestroyCost(baseCost, starLevel, preventDestroy);
-  
+
+  // 2. PC방 + MVP 혜택 적용
+  const benefitDiscountCost = applyBenefitDiscount(baseCost, benefit);
+
+  // 3. 이벤트 할인 적용
+  const eventDiscountCost = applyEventDiscount(benefitDiscountCost, event);
+
+  // 4. 파괴 방지 비용
+  const preventDestroyCost = applyPreventDestroyCost(
+    baseCost,
+    starLevel,
+    preventDestroy
+  );
+
   return eventDiscountCost + preventDestroyCost;
 };

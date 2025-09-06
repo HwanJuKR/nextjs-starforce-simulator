@@ -7,6 +7,7 @@ import EnhanceCost from "@/components/enhance/EnhanceCost";
 import EnhanceEvent from "@/components/enhance/EnhanceEvent";
 import EnhanceItem from "@/components/enhance/EnhanceItem";
 import EnhanceStarLevel from "@/components/enhance/EnhanceStarLevel";
+import EnhanceBenefit from "@/components/enhance/EnhanceBenefit";
 import SimulationChart from "@/components/simulation/SimulationChart";
 import SimulationControl from "@/components/simulation/SimulationControl";
 import SimulationSetting from "@/components/simulation/SimulationSetting";
@@ -31,6 +32,8 @@ export default function EnhanceSimulator() {
           <EnhanceCost />
           {/* 강화 이벤트 영역 */}
           <EnhanceEvent />
+          {/* 혜택 영역 */}
+          <EnhanceBenefit />
           {/* 강화하기 영역 */}
           <EnhanceControl />
         </div>

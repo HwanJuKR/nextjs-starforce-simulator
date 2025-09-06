@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { calculateEnhanceCost } from '@/hooks/useCost';
-import { EquipLevel, IEvent, IStats, StarLevel, StarLevelStats } from '@/types';
+import { EquipLevel, IEvent, IStats, StarLevel, StarLevelStats, IBenefit } from '@/types';
 
 // 이벤트
 export const eventAtom = atom<IEvent>({
@@ -18,6 +18,12 @@ export const equipLevelAtom = atom<EquipLevel>(150);
 export const isSimulatingAtom = atom(false);
 export const preventDestroyAtom = atom(false);
 export const starCatchAtom = atom(false);
+
+// 혜택
+export const benefitAtom = atom<IBenefit>({
+  pcRoom: false,
+  mvpGrade: 'none',
+});
 
 export const statsAtom = atom<IStats>({
   attempt: 0,
@@ -37,6 +43,7 @@ export const currentCostAtom = atom((get) => {
   const currentStarLevel = get(currentStarLevelAtom);
   const event = get(eventAtom);
   const preventDestroy = get(preventDestroyAtom);
+  const benefit = get(benefitAtom);
 
-  return calculateEnhanceCost(equipLevel, currentStarLevel, event, preventDestroy);
+  return calculateEnhanceCost(equipLevel, currentStarLevel, event, preventDestroy, benefit);
 });

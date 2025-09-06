@@ -25,16 +25,16 @@ export default function SimulationTable() {
                 강화 단계
               </th>
               <th scope="col" className="text-center p-2 text-gray-300">
-                성공률
-              </th>
-              <th scope="col" className="text-center p-2 text-gray-300">
-                파괴률
-              </th>
-              <th scope="col" className="text-center p-2 text-gray-300">
                 시도 횟수
               </th>
               <th scope="col" className="text-center p-2 text-gray-300">
+                성공률
+              </th>
+              <th scope="col" className="text-center p-2 text-gray-300">
                 실제 성공률
+              </th>
+              <th scope="col" className="text-center p-2 text-gray-300">
+                파괴률
               </th>
               <th scope="col" className="text-center p-2 text-gray-300">
                 실제 파괴률
@@ -71,7 +71,7 @@ export default function SimulationTable() {
                     className="border-b border-gray-700 hover:bg-gray-700"
                   >
                     <td className="p-2 text-yellow-400 font-bold">
-                      {item.starLevel + "성"}
+                      {item.starLevel}성
                       {index === stats.maxStarLevel && (
                         <span className="ml-2 text-green-400">달성!</span>
                       )}
@@ -91,22 +91,22 @@ export default function SimulationTable() {
                   className="border-b border-gray-700 hover:bg-gray-700"
                 >
                   <td className="p-2 text-yellow-400 font-bold">
-                    {item.starLevel + "성"}
+                    {item.starLevel}성
                     {index === stats.maxStarLevel && index > 0 && (
                       <span className="ml-2 text-green-400">최고</span>
                     )}
                   </td>
-                  <td className="p-2 text-center text-green-400">
-                    {item.success}%
-                  </td>
-                  <td className="p-2 text-center text-red-400">
-                    {item.destroy}%
-                  </td>
                   <td className="p-2 text-center text-white">
                     {StarLevelStat.attempt.toLocaleString()}회
                   </td>
+                  <td className="p-2 text-center text-green-400">
+                    {item.success}%
+                  </td>
                   <td className="p-2 text-center text-blue-400">
                     {realSuccessRate}%
+                  </td>
+                  <td className="p-2 text-center text-red-400">
+                    {item.destroy}%
                   </td>
                   <td className="p-2 text-center text-orange-400">
                     {realDestroyRate}%
