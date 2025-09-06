@@ -13,13 +13,13 @@ export default function SimulationStats() {
         <div className="flex justify-between">
           <span className="text-gray-300">현재 단계</span>
           <span className="text-white">
-            {(starData[currentStarLevel]?.starLevel || "0") + "성"}
+            {(starData[currentStarLevel]?.starLevel || "0")}성
           </span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-300">최고 달성</span>
           <span className="text-green-400">
-            {(starData[stats.maxStarLevel]?.starLevel || "0") + "성"}
+            {(starData[stats.maxStarLevel]?.starLevel || "0")}성
           </span>
         </div>
         <div className="flex justify-between">

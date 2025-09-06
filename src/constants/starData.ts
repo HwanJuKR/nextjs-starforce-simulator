@@ -1,5 +1,6 @@
-import { IStarData } from '@/types';
+import { IStarData, MVPGrade } from '@/types';
 
+// 스타포스 강화 확률
 export const starData: IStarData[] = [
   { starLevel: 0, success: 95.0, fail: 5.0, destroy: 0 },
   { starLevel: 1, success: 90.0, fail: 10.0, destroy: 0 },
@@ -34,4 +35,45 @@ export const starData: IStarData[] = [
   { starLevel: 30, success: 0, fail: 0, destroy: 0 },
 ];
 
+// 스타포스 최대 레벨
 export const MAX_STAR_FORCE = starData.length - 1;
+
+// 파괴 후 리셋 레벨
+export const DESTROY_RESET_LEVEL = 12;
+
+// 5, 10, 15성에서는 강화시 성공확률 100% 이벤트
+export const PERFECT_SUCCESS_LEVEL = [5, 10, 15];
+
+// 15성부터 17성까지만 파괴 방지 옵션 활성화
+export const PREVENT_DESTROY_MIN_LEVEL = 15;
+
+// 15성부터 17성까지만 파괴 방지 옵션 활성화
+export const PREVENT_DESTROY_MAX_LEVEL = 17;
+
+// 21성 이하에서는 파괴 확률 30% 감소 이벤트
+export const REDUCED_DESTROY_MAX_LEVEL = 21;
+
+// 10성 이하에서는 강화 시 1+1 이벤트
+export const DOUBLE_ENHANCE_MAX_LEVEL = 10;
+
+// MVP 등급별 할인율
+export const MVP_DISCOUNT_RATE: Record<MVPGrade, number> = {
+  none: 0,
+  silver: 0.03,
+  gold: 0.05,
+  diamond: 0.1,
+};
+
+// PC방 할인율
+export const PC_ROOM_DISCOUNT_RATE = 0.05;
+
+// MVP 등급 옵션 데이터
+export const MVP_GRADE_OPTION = [
+  { grade: "none", label: "없음", discount: "0%" },
+  { grade: "silver", label: "실버", discount: "3%" },
+  { grade: "gold", label: "골드", discount: "5%" },
+  { grade: "diamond", label: "다이아", discount: "10%" },
+] as const;
+
+// 이벤트 할인율
+export const EVENT_DISCOUNT_RATE = 0.7;

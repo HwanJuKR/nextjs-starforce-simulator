@@ -1,5 +1,6 @@
 import { useAtomValue } from "jotai";
 import { currentStarLevelAtom, eventAtom, preventDestroyAtom, starCatchAtom } from "@/store/atoms";
+import { PREVENT_DESTROY_MIN_LEVEL, PREVENT_DESTROY_MAX_LEVEL } from "@/constants/starData";
 import { calculateEnhanceChance } from "@/hooks/useEnhance";
 
 export default function EnhanceChance() {
@@ -8,7 +9,7 @@ export default function EnhanceChance() {
   const preventDestroy = useAtomValue(preventDestroyAtom);
   const starCatch = useAtomValue(starCatchAtom);
   const chance = calculateEnhanceChance(currentStarLevel, event, preventDestroy, starCatch);
-  const isPreventDestroy = preventDestroy && currentStarLevel >= 15 && currentStarLevel <= 17;
+  const isPreventDestroy = preventDestroy && currentStarLevel >= PREVENT_DESTROY_MIN_LEVEL && currentStarLevel <= PREVENT_DESTROY_MAX_LEVEL;
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
