@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
 import { benefitAtom } from "@/store/atoms";
-import { MVPGrade, MVP_GRADE_OPTION } from "@/types";
+import { MVPGrade } from "@/types";
+import { MVP_GRADE_OPTION } from "@/constants/starData";
 
 export default function EnhanceBenefit() {
   const [benefit, setBenefit] = useAtom(benefitAtom);

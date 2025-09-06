@@ -3,8 +3,6 @@ import {
   MVP_DISCOUNT_RATE,
   PC_ROOM_DISCOUNT_RATE,
   EVENT_DISCOUNT_RATE,
-} from "@/types";
-import {
   PREVENT_DESTROY_MIN_LEVEL,
   PREVENT_DESTROY_MAX_LEVEL,
 } from "@/constants/starData";
