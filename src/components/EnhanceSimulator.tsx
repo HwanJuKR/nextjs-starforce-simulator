@@ -14,9 +14,8 @@ import SimulationSetting from "@/components/simulation/SimulationSetting";
 import SimulationStats from "@/components/simulation/SimulationStats";
 import SimulationTable from "@/components/simulation/SimulationTable";
 export default function EnhanceSimulator() {
-
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
+    <>
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 스타포스 강화 영역 */}
         <div className="lg:col-span-2 space-y-4">
@@ -55,6 +54,6 @@ export default function EnhanceSimulator() {
       <div className="max-w-7xl mx-auto">
         <SimulationTable />
       </div>
-    </div>
+    </>
   );
 }
