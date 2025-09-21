@@ -77,3 +77,12 @@ export const MVP_GRADE_OPTION = [
 
 // 이벤트 할인율
 export const EVENT_DISCOUNT_RATE = 0.7;
+
+// NEXON Open API
+export const NEXON_API_BASE_URL = 'https://open.api.nexon.com';
+
+// API 조회 설정 기본값
+export const DEFAULT_QUERY_COUNT = '100';
+export const MIN_QUERY_COUNT = 10;
+export const MAX_QUERY_COUNT = 1000;
+export const MIN_QUERY_DATE = '2023-12-27';

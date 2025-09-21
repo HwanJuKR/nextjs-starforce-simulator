@@ -1,5 +1,3 @@
-"use client";
-
 import Header from "@/components/common/Header";
 import EnhanceChance from "@/components/enhance/EnhanceChance";
 import EnhanceControl from "@/components/enhance/EnhanceControl";
@@ -13,6 +11,7 @@ import SimulationControl from "@/components/simulation/SimulationControl";
 import SimulationSetting from "@/components/simulation/SimulationSetting";
 import SimulationStats from "@/components/simulation/SimulationStats";
 import SimulationTable from "@/components/simulation/SimulationTable";
+
 export default function EnhanceSimulator() {
   return (
     <>
@@ -20,7 +19,7 @@ export default function EnhanceSimulator() {
         {/* 스타포스 강화 영역 */}
         <div className="lg:col-span-2 space-y-4">
           {/* 헤더 */}
-          <Header />
+          <Header title="스타포스 시뮬레이터" />
           {/* 장비 아이템 영역 */}
           <EnhanceItem />
           {/* 별 표시 영역 */}
