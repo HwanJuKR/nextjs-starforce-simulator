@@ -1,46 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { useHistory } from "@/hooks/useHistory";
-import { IHistoryParams } from "@/types";
 import {
   DEFAULT_QUERY_COUNT,
-  MIN_QUERY_COUNT,
   MAX_QUERY_COUNT,
+  MIN_QUERY_COUNT,
   MIN_QUERY_DATE,
 } from "@/constants/starData";
+import { useHistory } from "@/hooks/useHistory";
+import { historyApiKeyAtom, historyCountAtom, historyDateAtom } from "@/store/atoms";
+import { useAtom } from "jotai";
 
-export default function StarforceHistoryControl() {
-  const [apiKey, setApiKey] = useState("");
-  const [count, setCount] = useState(DEFAULT_QUERY_COUNT);
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+export default function HistoryControl() {
+  const [apiKey, setApiKey] = useAtom(historyApiKeyAtom);
+  const [count, setCount] = useAtom(historyCountAtom);
+  const [date, setDate] = useAtom(historyDateAtom);
 
-  const queryParams: IHistoryParams = {
-    apiKey: apiKey.trim(),
-    count: count.trim(),
-    date: date.trim(),
-  };
-
-  const { isLoading, data, error, refetch, resetData, isSuccess, isError } =
-    useHistory(queryParams);
+  const { data, error, isLoading, isError, isSuccess, refetch, resetData } = useHistory({
+    apiKey,
+    count,
+    date,
+  });
 
   const handleSubmit = () => {
-    if (!apiKey.trim() || !count.trim() || !date.trim()) {
-      alert("모든 필수 항목을 입력해주세요.");
-
-      return;
-    }
-
-    const countNum = parseInt(count);
-
-    if (countNum < MIN_QUERY_COUNT || countNum > MAX_QUERY_COUNT) {
-      alert(
-        `조회 갯수는 ${MIN_QUERY_COUNT}개 이상 ${MAX_QUERY_COUNT}개 이하로 입력해주세요.`
-      );
-
-      return;
-    }
-
     refetch();
   };
 
@@ -57,7 +38,7 @@ export default function StarforceHistoryControl() {
 
       {isError && error && (
         <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded-md">
-          <p className="text-red-400 text-sm font-medium">{error.error.name}</p>
+          <p className="text-red-400 text-sm">{error.error.name}</p>
           <p className="text-red-300 text-sm">{error.error.message}</p>
         </div>
       )}
@@ -117,18 +98,18 @@ export default function StarforceHistoryControl() {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-yellow-600 disabled:cursor-not-allowed text-black rounded-md transition-colors"
+          className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-yellow-600 disabled:cursor-not-allowed text-black rounded-md transition-colors cursor-pointer"
         >
           {isLoading ? "조회 중..." : "조회하기"}
         </button>
         <button
           onClick={handleReset}
           disabled={isLoading}
-          className="px-6 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-md transition-colors"
+          className="px-6 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-md transition-colors cursor-pointer"
         >
           초기화
         </button>

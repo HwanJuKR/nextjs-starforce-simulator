@@ -1,6 +1,14 @@
-import { atom } from 'jotai';
-import { calculateEnhanceCost } from '@/hooks/useCost';
-import { EquipLevel, IEvent, IStats, StarLevel, StarLevelStats, IBenefit } from '@/types';
+import { atom } from "jotai";
+import { calculateEnhanceCost } from "@/hooks/useCost";
+import {
+  EquipLevel,
+  IEvent,
+  IStats,
+  StarLevel,
+  StarLevelStats,
+  IBenefit,
+} from "@/types";
+import { DEFAULT_QUERY_COUNT } from "@/constants/starData";
 
 // 이벤트
 export const eventAtom = atom<IEvent>({
@@ -22,7 +30,7 @@ export const starCatchAtom = atom(false);
 // 혜택
 export const benefitAtom = atom<IBenefit>({
   pcRoom: false,
-  mvpGrade: 'none',
+  mvpGrade: "none",
 });
 
 export const statsAtom = atom<IStats>({
@@ -45,5 +53,16 @@ export const currentCostAtom = atom((get) => {
   const preventDestroy = get(preventDestroyAtom);
   const benefit = get(benefitAtom);
 
-  return calculateEnhanceCost(equipLevel, currentStarLevel, event, preventDestroy, benefit);
+  return calculateEnhanceCost(
+    equipLevel,
+    currentStarLevel,
+    event,
+    preventDestroy,
+    benefit
+  );
 });
+
+// 히스토리 조회
+export const historyApiKeyAtom = atom("");
+export const historyCountAtom = atom(DEFAULT_QUERY_COUNT);
+export const historyDateAtom = atom(new Date().toISOString().split("T")[0]);
