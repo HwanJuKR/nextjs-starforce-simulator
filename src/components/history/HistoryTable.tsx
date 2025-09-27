@@ -1,48 +1,58 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { IHistoryItem, IHistoryResponse } from "@/types";
+"use client";
+
+import { useHistory } from "@/hooks/useHistory";
+import { historyApiKeyAtom, historyCountAtom, historyDateAtom } from "@/store/atoms";
+import { IHistoryItem } from "@/types";
+import { useAtomValue } from "jotai";
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return date.toLocaleString("ko-KR");
+};
+
+const getResultColor = (result: string) => {
+  switch (result) {
+    case "성공":
+      return "text-green-400";
+    case "실패":
+      return "text-red-400";
+    case "파괴":
+      return "text-red-500";
+    default:
+      return "text-gray-300";
+  }
+};
+
+const getOption = (item: IHistoryItem) => {
+  const options: string[] = [];
+
+  if (item.starcatch_result === "성공") options.push("스타 캐치");
+  if (item.destroy_defence === "적용") options.push("파괴 방지");
+  if (item.chance_time === "적용") options.push("찬스 타임");
+  if (item.protect_shield === "적용") options.push("프로텍트 실드");
+  if (item.event_field_flag === "적용") options.push("파괴 방지 필드 이벤트");
+
+  return options.length > 0 ? options.join(", ") : "-";
+};
 
 export default function HistoryTable() {
-  const queryClient = useQueryClient();
+  const apiKey = useAtomValue(historyApiKeyAtom);
+  const count = useAtomValue(historyCountAtom);
+  const date = useAtomValue(historyDateAtom);
 
-  const queryData = queryClient.getQueryData<IHistoryResponse>(["history"]);
-  const data = queryData?.starforce_history || [];
-  const queryState = queryClient.getQueryState(["history"]);
-  const isLoading = queryState?.fetchStatus === "fetching";
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const { data, isLoading } = useHistory({
+    apiKey,
+    count,
+    date,
+  });
 
-    return date.toLocaleString("ko-KR");
-  };
-
-  const getResultColor = (result: string) => {
-    switch (result) {
-      case "성공":
-        return "text-green-400";
-      case "실패":
-        return "text-red-400";
-      case "파괴":
-        return "text-red-500";
-      default:
-        return "text-gray-300";
-    }
-  };
-
-  const getOption = (item: IHistoryItem) => {
-    const options = [];
-
-    if (item.starcatch_result === "성공") options.push("스타캐치");
-    if (item.destroy_defence === "적용") options.push("파괴방지");
-    if (item.chance_time === "적용") options.push("찬스타임");
-    if (item.protect_shield === "적용") options.push("보호막");
-    if (item.event_field_flag === "적용") options.push("이벤트");
-
-    return options.length > 0 ? options.join(", ") : "-";
-  };
+  const historyData = data?.starforce_history || [];
 
   return (
     <div className="mt-8 bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-lg mb-4">
-        스타포스 기록 ({isLoading ? "조회 중..." : `${data.length}건`})
+        스타포스 기록 ({isLoading ? "조회 중..." : `${historyData.length}건`})
       </h3>
 
       {isLoading ? (
@@ -50,20 +60,21 @@ export default function HistoryTable() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
           <span className="ml-2 text-gray-400">데이터를 불러오는 중...</span>
         </div>
-      ) : data.length === 0 ? (
+      ) : historyData.length === 0 ? (
         <div className="text-center py-8 text-gray-400">
           조회된 스타포스 기록이 없습니다.
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full">
+            <caption className="blind">스타포스 기록</caption>
             <colgroup>
+              <col width="20%" />
               <col width="15%" />
-              <col width="17%" />
-              <col width="17%" />
-              <col width="17%" />
-              <col width="17%" />
-              <col width="17%" />
+              <col width="20%" />
+              <col width="15%" />
+              <col width="15%" />
+              <col width="15%" />
             </colgroup>
             <thead>
               <tr>
@@ -88,12 +99,12 @@ export default function HistoryTable() {
               </tr>
             </thead>
             <tbody>
-              {data.map((item) => (
+              {historyData.map((item) => (
                 <tr
                   key={item.id}
                   className="border-b border-gray-700 hover:bg-gray-700"
                 >
-                  <td className="p-2 text-xs">
+                  <td className="p-2">
                     {formatDate(item.date_create)}
                   </td>
                   <td className="p-2 text-center">
@@ -125,13 +136,13 @@ export default function HistoryTable() {
                     </span>
                   </td>
                   <td
-                    className={`p-2 text-center font-medium ${getResultColor(
+                    className={`p-2 text-center ${getResultColor(
                       item.item_upgrade_result
                     )}`}
                   >
                     {item.item_upgrade_result}
                   </td>
-                  <td className="p-2 text-center text-xs">
+                  <td className="p-2 text-center">
                     <div className="truncate" title={getOption(item)}>
                       {getOption(item)}
                     </div>

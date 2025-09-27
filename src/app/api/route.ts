@@ -3,12 +3,20 @@ import { NEXON_API_BASE_URL } from "@/constants/starData";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const apiKey = searchParams.get("apiKey");
+  const apiKey = request.headers.get("x-nxopen-api-key");
   const count = searchParams.get("count");
   const date = searchParams.get("date");
 
   if (!apiKey || !count || !date) {
-    return new Response("필수 파라미터가 누락되었습니다", { status: 400 });
+    return Response.json(
+      {
+        error: {
+          name: "ValidationError",
+          message: "필수 파라미터가 누락되었습니다",
+        },
+      },
+      { status: 400 }
+    );
   }
 
   const nexonUrl = new URL(
@@ -21,20 +29,44 @@ export async function GET(request: NextRequest) {
     const response = await fetch(nexonUrl.toString(), {
       method: "GET",
       headers: {
-        "x-nxopen-api-key": apiKey,
         "Content-Type": "application/json",
+        "x-nxopen-api-key": apiKey,
       },
     });
 
-    const data = await response.text();
+    if (!response.ok) {
+      let errorMessage = "Nexon API 요청에 실패했습니다";
 
-    return new Response(data, {
-      status: response.status,
-      headers: { "Content-Type": "application/json" },
-    });
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error?.message || errorMessage;
+      } catch {}
+
+      return Response.json(
+        {
+          error: {
+            name: "NexonAPIError",
+            message: errorMessage,
+          },
+        },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+
+    return Response.json(data);
   } catch (error) {
-    console.error("error:", error);
+    console.error("API Error:", error);
 
-    return new Response("서버 오류가 발생했습니다", { status: 500 });
+    return Response.json(
+      {
+        error: {
+          name: "ServerError",
+          message: "서버 오류가 발생했습니다",
+        },
+      },
+      { status: 500 }
+    );
   }
 }

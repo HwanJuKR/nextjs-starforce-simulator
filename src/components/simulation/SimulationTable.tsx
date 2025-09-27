@@ -9,7 +9,8 @@ export default function SimulationTable() {
   return (
     <div className="mt-8 bg-gray-800 rounded-lg p-4 border border-gray-700">
       <h3 className="text-blue-400 text-lg mb-4">상세 시뮬레이션 통계</h3>
-      <table className="w-full text-sm">
+      <table className="w-full">
+        <caption className="blind">상세 시뮬레이션 통계</caption>
         <colgroup>
           <col width="15%" />
           <col width="17%" />

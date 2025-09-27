@@ -16,11 +16,11 @@ export default function RootLayout({
 return (
     <html lang="ko">
       <body>
-        <QueryProvider>
-          <Provider>
+        <Provider>
+          <QueryProvider>
             {children}
-          </Provider>
-        </QueryProvider>
+          </QueryProvider>
+        </Provider>
       </body>
     </html>
   );
