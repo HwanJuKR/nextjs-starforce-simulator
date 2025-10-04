@@ -1,3 +1,5 @@
+"use client";
+
 import { useAtom } from "jotai";
 import { equipLevelAtom, targetStarLevelAtom } from "@/store/atoms";
 import { toStarLevel, toEquipLevel } from "@/types";

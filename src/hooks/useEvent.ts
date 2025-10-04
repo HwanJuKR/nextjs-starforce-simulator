@@ -1,3 +1,5 @@
+"use client";
+
 import { useAtom } from 'jotai';
 import { eventAtom } from '@/store/atoms';
 import { IEvent } from '@/types';

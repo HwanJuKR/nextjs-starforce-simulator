@@ -1,3 +1,5 @@
+"use client";
+
 import {
   starData,
   MAX_STAR_FORCE,
