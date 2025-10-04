@@ -1,3 +1,5 @@
+"use client";
+
 import { useAtomValue } from "jotai";
 import { currentStarLevelAtom, eventAtom, preventDestroyAtom, starCatchAtom } from "@/store/atoms";
 import { PREVENT_DESTROY_MIN_LEVEL, PREVENT_DESTROY_MAX_LEVEL } from "@/constants/starData";

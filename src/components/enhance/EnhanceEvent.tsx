@@ -1,3 +1,5 @@
+"use client";
+
 import useEvent from "@/hooks/useEvent";
 
 export default function EnhanceEvent() {

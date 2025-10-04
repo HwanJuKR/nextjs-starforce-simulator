@@ -1,3 +1,5 @@
+"use client";
+
 import { starData } from "@/constants/starData";
 import { useAtomValue } from "jotai";
 import { starLevelStatsAtom, statsAtom } from "@/store/atoms";

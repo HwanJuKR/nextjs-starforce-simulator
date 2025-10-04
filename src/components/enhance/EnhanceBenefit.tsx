@@ -1,3 +1,5 @@
+"use client";
+
 import { useAtom } from "jotai";
 import { benefitAtom } from "@/store/atoms";
 import { MVPGrade } from "@/types";

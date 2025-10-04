@@ -13,7 +13,7 @@ const isHistoryApiError = (error: unknown): error is IHistoryApiError => {
 const fetchHistoryAPI = async (
   params: IHistoryParams
 ): Promise<IHistoryResponse> => {
-  const url = new URL("/api", window.location.origin);
+  const url = new URL("/api/history", window.location.origin);
   url.searchParams.append("count", params.count);
   url.searchParams.append("date", params.date);
 
