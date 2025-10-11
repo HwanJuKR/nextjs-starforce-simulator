@@ -31,8 +31,13 @@ export default function EnhanceControl() {
       <div className="flex space-x-2 mb-4">
         <button
           onClick={() => setStarCatch(!starCatch)}
+          disabled={isSimulating}
           className={`flex items-center space-x-2 rounded-lg p-2 transition-colors ${
-            starCatch
+            isSimulating ? "cursor-not-allowed" : "cursor-pointer"
+          } ${
+            isSimulating
+              ? "bg-gray-700 opacity-50"
+              : starCatch
               ? "bg-blue-600 hover:bg-blue-700"
               : "bg-gray-700 hover:bg-gray-600"
           }`}
@@ -48,13 +53,15 @@ export default function EnhanceControl() {
         </button>
         <button
           onClick={() => setPreventDestroy(!preventDestroy)}
-          disabled={!isPreventDestroy}
+          disabled={!isPreventDestroy || isSimulating}
           className={`flex items-center space-x-2 rounded-lg p-2 transition-colors ${
-            isPreventDestroy
-              ? preventDestroy
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-              : "bg-gray-700 opacity-50 cursor-not-allowed"
+            !isPreventDestroy || isSimulating ? "cursor-not-allowed" : "cursor-pointer"
+          } ${
+            !isPreventDestroy || isSimulating
+              ? "bg-gray-700 opacity-50"
+              : preventDestroy
+              ? "bg-blue-600 hover:bg-blue-700"
+              : "bg-gray-700 hover:bg-gray-600"
           }`}
         >
           <span
