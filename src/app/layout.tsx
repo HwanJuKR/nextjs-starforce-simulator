@@ -13,12 +13,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-return (
+  return (
     <html lang="ko">
       <body>
         <Provider>
           <QueryProvider>
-            {children}
+            <div className="min-h-screen bg-gray-900 text-white">
+              {children}
+            </div>
           </QueryProvider>
         </Provider>
       </body>
