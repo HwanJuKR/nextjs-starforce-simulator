@@ -33,8 +33,10 @@ export default function EnhanceControl() {
           onClick={() => setStarCatch(!starCatch)}
           disabled={isSimulating}
           className={`flex items-center space-x-2 rounded-lg p-2 transition-colors ${
+            isSimulating ? "cursor-not-allowed" : "cursor-pointer"
+          } ${
             isSimulating
-              ? "bg-gray-700 opacity-50 cursor-not-allowed"
+              ? "bg-gray-700 opacity-50"
               : starCatch
               ? "bg-blue-600 hover:bg-blue-700"
               : "bg-gray-700 hover:bg-gray-600"
@@ -53,8 +55,10 @@ export default function EnhanceControl() {
           onClick={() => setPreventDestroy(!preventDestroy)}
           disabled={!isPreventDestroy || isSimulating}
           className={`flex items-center space-x-2 rounded-lg p-2 transition-colors ${
+            !isPreventDestroy || isSimulating ? "cursor-not-allowed" : "cursor-pointer"
+          } ${
             !isPreventDestroy || isSimulating
-              ? "bg-gray-700 opacity-50 cursor-not-allowed"
+              ? "bg-gray-700 opacity-50"
               : preventDestroy
               ? "bg-blue-600 hover:bg-blue-700"
               : "bg-gray-700 hover:bg-gray-600"
