@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -25,36 +25,44 @@ export default function SimulationChart() {
   const [currentChart, setCurrentChart] = useState<ChartType>("attempt");
 
   // 레벨 별 시도 횟수 (12성 부터)
-  const attemptData = starLevelStats
-    .map((stat, index) => {
-      if (stat.attempt === 0 || index < 12) return null;
+  const attemptData = useMemo(
+    () =>
+      starLevelStats
+        .map((stat, index) => {
+          if (stat.attempt === 0 || index < 12) return null;
 
-      return {
-        starLevel: `${index}성`,
-        시도: stat.attempt,
-        성공: stat.success,
-        실패: stat.attempt - stat.success - stat.destroy,
-        파괴: stat.destroy,
-      };
-    })
-    .filter(Boolean);
+          return {
+            starLevel: `${index}성`,
+            시도: stat.attempt,
+            성공: stat.success,
+            실패: stat.attempt - stat.success - stat.destroy,
+            파괴: stat.destroy,
+          };
+        })
+        .filter(Boolean),
+    [starLevelStats]
+  );
 
   // 성공률 비교 (12성 부터)
-  const successRateData = starLevelStats
-    .map((stat, index) => {
-      if (stat.attempt === 0 || index < 12) return null;
+  const successRateData = useMemo(
+    () =>
+      starLevelStats
+        .map((stat, index) => {
+          if (stat.attempt === 0 || index < 12) return null;
 
-      const successRate = starData[index]?.success || 0;
-      const realSuccessRate = (stat.success / stat.attempt) * 100 || 0;
+          const successRate = starData[index]?.success || 0;
+          const realSuccessRate = (stat.success / stat.attempt) * 100 || 0;
 
-      return {
-        starLevel: `${index}성`,
-        성공률: successRate,
-        실제성공률: realSuccessRate,
-        시도: stat.attempt,
-      };
-    })
-    .filter(Boolean);
+          return {
+            starLevel: `${index}성`,
+            성공률: successRate,
+            실제성공률: realSuccessRate,
+            시도: stat.attempt,
+          };
+        })
+        .filter(Boolean),
+    [starLevelStats]
+  );
 
   const renderChart = () => {
     if (isSimulating) {

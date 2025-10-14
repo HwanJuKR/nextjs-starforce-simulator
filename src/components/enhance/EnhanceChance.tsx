@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useAtomValue } from "jotai";
 import { currentStarLevelAtom, eventAtom, preventDestroyAtom, starCatchAtom } from "@/store/atoms";
 import { PREVENT_DESTROY_MIN_LEVEL, PREVENT_DESTROY_MAX_LEVEL } from "@/constants/starData";
@@ -10,7 +11,9 @@ export default function EnhanceChance() {
   const event = useAtomValue(eventAtom);
   const preventDestroy = useAtomValue(preventDestroyAtom);
   const starCatch = useAtomValue(starCatchAtom);
-  const chance = calculateEnhanceChance(currentStarLevel, event, preventDestroy, starCatch);
+  const chance = useMemo(() => 
+    calculateEnhanceChance(currentStarLevel, event, preventDestroy, starCatch)
+  , [currentStarLevel, event, preventDestroy, starCatch]);
   const isPreventDestroy = preventDestroy && currentStarLevel >= PREVENT_DESTROY_MIN_LEVEL && currentStarLevel <= PREVENT_DESTROY_MAX_LEVEL;
 
   return (
