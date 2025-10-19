@@ -56,6 +56,7 @@ export default function HistoryControl() {
           API 키 <span className="text-red-400">*</span>
         </label>
         <input
+          data-testid="apikey"
           type="password"
           placeholder="Nexon Open API 키를 입력하세요"
           value={apiKey}
@@ -69,6 +70,7 @@ export default function HistoryControl() {
             조회 갯수 <span className="text-red-400">*</span>
           </label>
           <input
+            data-testid="count"
             type="number"
             min={MIN_QUERY_COUNT}
             max={MAX_QUERY_COUNT}
@@ -85,6 +87,7 @@ export default function HistoryControl() {
             조회 기준일 (KST) <span className="text-red-400">*</span>
           </label>
           <input
+            data-testid="date"
             type="date"
             min={MIN_QUERY_DATE}
             max={new Date().toISOString().split("T")[0]}
@@ -100,6 +103,7 @@ export default function HistoryControl() {
 
       <div className="flex gap-2">
         <button
+          data-testid="btn-submit"
           onClick={handleSubmit}
           disabled={isLoading}
           className="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-yellow-600 disabled:cursor-not-allowed text-black rounded-md transition-colors cursor-pointer"
@@ -107,6 +111,7 @@ export default function HistoryControl() {
           {isLoading ? "조회 중..." : "조회하기"}
         </button>
         <button
+          data-testid="btn-reset"
           onClick={handleReset}
           disabled={isLoading}
           className="px-6 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-md transition-colors cursor-pointer"

@@ -15,6 +15,7 @@ export default function SimulationControl() {
       <h3 className="text-blue-400 text-sm mb-3">시뮬레이션</h3>
       <div className="space-y-2">
         <button
+          data-testid="btn-bulk10k"
           onClick={() => bulkSimulate(10000)}
           disabled={isSimulating || currentStarLevel >= starData.length - 1}
           className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
@@ -22,6 +23,7 @@ export default function SimulationControl() {
           10,000번 시뮬레이션
         </button>
         <button
+          data-testid="btn-bulk100k"
           onClick={() => bulkSimulate(100000)}
           disabled={isSimulating || currentStarLevel >= starData.length - 1}
           className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
@@ -29,6 +31,7 @@ export default function SimulationControl() {
           100,000번 시뮬레이션
         </button>
         <button
+          data-testid="btn-bulk1m"
           onClick={() => bulkSimulate(1000000)}
           disabled={isSimulating || currentStarLevel >= starData.length - 1}
           className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
@@ -36,6 +39,7 @@ export default function SimulationControl() {
           1,000,000번 시뮬레이션
         </button>
         <button
+          data-testid="btn-bulk-reset"
           onClick={reset}
           disabled={isSimulating}
           className="w-full cursor-pointer bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-[0.8rem] px-[1.6rem] rounded text-sm transition-colors"
