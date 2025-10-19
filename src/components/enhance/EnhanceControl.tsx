@@ -86,6 +86,7 @@ export default function EnhanceControl() {
       </div>
 
       <button
+        data-testid="btn-enhance"
         onClick={tryEnhance}
         disabled={isSimulating || currentStarLevel === MAX_STAR_FORCE}
         className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-colors"

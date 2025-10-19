@@ -14,6 +14,7 @@ export default function EnhanceEvent() {
       <div className="space-y-3">
         <label className={`flex items-center space-x-3 ${isSimulating ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
           <input
+            data-testid="double-enhance"
             type="checkbox"
             checked={event.doubleEnhance}
             onChange={() => toggleEvent('doubleEnhance')}
@@ -26,6 +27,7 @@ export default function EnhanceEvent() {
         </label>
         <label className={`flex items-center space-x-3 ${isSimulating ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
           <input
+            data-testid="cost-discount"
             type="checkbox"
             checked={event.costDiscount}
             onChange={() => toggleEvent('costDiscount')}

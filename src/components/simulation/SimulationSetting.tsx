@@ -15,6 +15,7 @@ export default function SimulationSetting() {
         <div>
           <label className="block text-gray-300 text-sm mb-1">장비 레벨</label>
           <input
+            data-testid="equip-level"
             type="number"
             value={equipLevel}
             onChange={(e) => setEquipLevel(toEquipLevel(Number(e.target.value)))}

@@ -25,6 +25,7 @@ export default function EnhanceBenefit() {
         {/* PC방 혜택 */}
         <label className={`flex items-center space-x-3 ${isSimulating ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
           <input
+            data-testid="pc-room"
             type="checkbox"
             checked={benefit.pcRoom}
             onChange={handleTogglePcRoom}
@@ -43,6 +44,7 @@ export default function EnhanceBenefit() {
             {MVP_GRADE_OPTION.map(({ grade, label, discount }) => (
               <label key={grade} className={`flex items-center space-x-3 ${isSimulating ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
                 <input
+                  data-testid={`mvp-${grade}`}
                   type="radio"
                   name="mvpGrade"
                   value={grade}

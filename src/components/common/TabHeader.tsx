@@ -16,6 +16,7 @@ export default function TabHeader() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex space-x-8">
           <button
+            data-testid="btn-simulator"
             onClick={() => handleTabChange("simulator")}
             className={`py-4 px-6 border-b-2 text-sm transition-colors cursor-pointer ${
               currentTab === "simulator"
@@ -26,6 +27,7 @@ export default function TabHeader() {
             스타포스 시뮬레이터
           </button>
           <button
+            data-testid="btn-history"
             onClick={() => handleTabChange("history")}
             className={`py-4 px-6 border-b-2 text-sm transition-colors cursor-pointer ${
               currentTab === "history"
