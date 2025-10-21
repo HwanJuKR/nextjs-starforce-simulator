@@ -36,7 +36,7 @@
 ### 1. 프로젝트 클론
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/HwanJuKR/nextjs-starforce-simulator
 cd nextjs-starforce-simulator
 ```
 
@@ -134,12 +134,6 @@ nextjs-starforce-simulator/
 │       ├── starData.ts               # 스타포스 데이터 타입
 │       ├── stats.ts                  # 통계 관련 타입
 │       └── index.ts                  # 타입 export
-├── public/                           # 정적 파일
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
 ├── cypress.config.ts                 # Cypress 설정 파일
 ├── next.config.ts                    # Next.js 설정 파일
 ├── tsconfig.json                     # TypeScript 설정 파일
@@ -156,15 +150,14 @@ nextjs-starforce-simulator/
 
 ### 실제 게임과 동일한 확률 시스템
 - 메이플스토리의 실제 스타포스 강화 확률을 정확히 구현
-- 찬스 타임, 파괴 방지, 올스탯 등 다양한 시스템 적용
+- 찬스 타임, 파괴 방지, 샤타포스 등 모든 시스템 적용
 
 ### 효율적인 상태 관리
 - Jotai를 통한 원자적 상태 관리로 불필요한 리렌더링 최소화
 - React Query를 통한 서버 상태 관리 및 캐싱
 
 ### 대량 시뮬레이션 최적화
-- 수천~수만 번의 시뮬레이션을 빠르게 수행
-- Web Worker를 활용한 비동기 처리 (필요시)
+- 수만 번의 시뮬레이션을 빠르게 수행
 
 ### 데이터 시각화
 - Recharts를 활용한 직관적인 차트
